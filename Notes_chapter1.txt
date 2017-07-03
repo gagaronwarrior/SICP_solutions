@@ -1,0 +1,36 @@
+1.
+
+More study on the approximation of square root:
+https://en.wikipedia.org/wiki/Methods_of_computing_square_roots
+
+complete sqrt programme:
+------------------------
+(define (sqrt-iter guess x)
+  (if (good-enough? guess x)
+      guess
+      (sqrt-iter (improve guess x)
+                 x)))
+
+(define (improve guess x)
+  (average (/ x guess) guess))
+
+(define (average x y)
+  (/ (+ x y) 2))
+
+(define (good-enough?  guess x)
+  (< (abs (- (square guess) x)) 0.001))
+
+(define (square x) (* x x))
+
+(define (abs x)
+  (if (< x 0)
+      (- x)
+      x))
+
+(define (sqrt x)
+  (sqrt-iter 1.0 x))
+        
+
+one important observation in average procedure is that if average is made on (x/guess) and x,
+the series does not converge and infinite loop is seen.
+
