@@ -125,5 +125,340 @@ Thus, in Normal order of evaluation, this programme will return 0.
 
 -------------------------------------------------------------------------------------------------------
 
+Exercise 1.6:
 
+(define (sqrt-iter guess x)
+  (new-if (good-enough? guess x)
+          guess
+          (sqrt-iter (improve guess x) x)))
+
+Applicative order evaluation:
+
+The arguments of "new-if" procedure will be first evaluated.
+(goo-enough? guess x) = predicate will return #t or #f.
+guess = primitive data.
+(sqrt-iter (improve guess x) x) = calls sqrt-iter on its arguement, which will again follow the same procedure defined above.
+which means it will keep calling the "sqrt-iter" and will never exit the loop of recursive call as check for base condition is done inside "new-if".
+
+Normal order evaluation:
+
+The program will terminate, as "sqrt-iter" won't be evaluated until it is needed.It means new-if will be evaluated first.
+
+Hence, with Applicative order interpretor "new-if" implementation will stuck in infinite loop.
+whereas with Normal order interpretor "new-if" will work as expected.
+
+----------------------------------------------------------------------------------------------------------------
+
+Exercise 1.7:
+
+for small numbers following deviation is seen:
+> (square (sqrt 0.9))
+0.9000017313019391
+> (square (sqrt 0.09))
+0.09001798129164813
+> (square (sqrt 0.009))
+0.009081934804666247
+> (square (sqrt 0.0009))
+0.0016241401856992538
+
+it can be seen that for 0.0009 the sqrt evaluation is not correct.
+
+for large numbers following deviation is seen:
+> (square (sqrt 9))
+9.00054933317044
+> (square (sqrt 90))
+90.00047291937803
+> (square (sqrt 900))
+900.0001385467602
+> (square (sqrt 9000))
+9000.000015152564
+> (square (sqrt 90000))
+90000.00000049788
+> (square (sqrt 900000))
+900000.0000000037
+> (square (sqrt 9000000))
+9000000.0
+> (square (sqrt 90000000))
+90000000.00035952
+> (square (sqrt 900000000))
+900000000.0000024
+> (square (sqrt 9000000000))
+9000000000.0
+> (square (sqrt 90000000000))
+90000000000.0
+> (square (sqrt 900000000000))
+899999999999.9999
+> (square (sqrt 9000000000000))
+9000000000000.0
+> (square (sqrt 90000000000000))
+No result.
+
+Thus we see for small numbers result are incorrect and for large numbers after sometime programme hang up.why?
+Lets see the result when added the display result to the guess-enough? procedure:
+
+(define (good-enough?  guess x)
+  (display guess)
+  (newline)
+  (< (abs (- (square guess) x)) 0.001))
+
+
+> (square (sqrt 0.9))
+1.0
+0.95
+0.9486842105263158
+0.9000017313019391
+> (square (sqrt 0.09))
+1.0
+0.545
+0.35506880733944957
+0.3042704026361998
+0.3000299673226795
+0.09001798129164813
+> (square (sqrt 0.009))
+1.0
+0.5045
+0.2611697224975223
+0.1478150361594179
+0.10435097036251169
+0.09529918575027935
+0.009081934804666247
+> (square (sqrt 0.0009))
+1.0
+0.50045
+0.25112419072834447
+0.12735403742556764
+0.06721047559484776
+0.04030062264654547
+0.0016241401856992538
+> 
+
+another example:
+> (square (sqrt 90000000000000))
+1.0
+45000000000000.5
+22500000000001.25
+11250000000002.625
+5625000000005.3125
+2812500000010.6562
+1406250000021.3281
+703125000042.6641
+351562500085.33203
+175781250170.66602
+87890625341.33301
+43945313182.666504
+21972657615.333237
+10986330855.66649
+5493169523.832227
+2746592953.907969
+1373312860.8888285
+686689197.9231743
+343410130.7919059
+171836104.04614136
+86179929.46873201
+43612128.07654334
+22837887.11099632
+13389353.505476972
+10055555.975293374
+9502915.922392966
+9486846.590065714
+9486832.980514899
+9486832.980505139
+9486832.980505139
+9486832.980505139
+9486832.980505139
+9486832.980505139
+9486832.980505139
+
+Problem here is "improve" procedure after sometime cannot improve the guess, as a result it will return the same value,
+whereas the "good-enough?" procedure returns false asking for improvement as guess is not within the precise limit,
+hence it will stuck in infinite loop.
+
+Hence solution is to stop if we cannot improve the guess anymore.
+
+
+under new solution we can see that execution getting failed previously is getting pass now:
+
+(define (good-enough?  guess x)
+  (display guess)
+  (newline)
+  (< (abs (- guess (improve guess x))) 0.001))
+
+
+Welcome to DrRacket, version 6.9 [3m].
+Language: sicp, with debugging; memory limit: 256 MB.
+> (square (sqrt 0.9))
+1.0
+0.95
+0.9486842105263158
+0.9000017313019391
+> (square (sqrt 0.0009))
+1.0
+0.50045
+0.25112419072834447
+0.12735403742556764
+0.06721047559484776
+0.04030062264654547
+0.031316391905865756
+0.03002766742182557
+0.0009016608107957646
+> 
+
+> (square (sqrt 90000000000000))
+1.0
+45000000000000.5
+22500000000001.25
+11250000000002.625
+5625000000005.3125
+2812500000010.6562
+1406250000021.3281
+703125000042.6641
+351562500085.33203
+175781250170.66602
+87890625341.33301
+43945313182.666504
+21972657615.333237
+10986330855.66649
+5493169523.832227
+2746592953.907969
+1373312860.8888285
+686689197.9231743
+343410130.7919059
+171836104.04614136
+86179929.46873201
+43612128.07654334
+22837887.11099632
+13389353.505476972
+10055555.975293374
+9502915.922392966
+9486846.590065714
+9486832.980514899
+90000000000185.2
+> 
+
+Surely we are not getting very close approximation, but now programme is not going to hangup.
+instead of checking the precise tolerance 0.001, lets check for the equality that guess and improve guess are same, then stop.
+
+(define (good-enough?  guess x)
+  (display guess)
+  (newline)
+  (= (abs (- guess (improve guess x))) 0.0))
+
+Welcome to DrRacket, version 6.9 [3m].
+Language: sicp, with debugging; memory limit: 256 MB.
+> (square (sqrt 90000000000000))
+1.0
+45000000000000.5
+22500000000001.25
+11250000000002.625
+5625000000005.3125
+2812500000010.6562
+1406250000021.3281
+703125000042.6641
+351562500085.33203
+175781250170.66602
+87890625341.33301
+43945313182.666504
+21972657615.333237
+10986330855.66649
+5493169523.832227
+2746592953.907969
+1373312860.8888285
+686689197.9231743
+343410130.7919059
+171836104.04614136
+86179929.46873201
+43612128.07654334
+22837887.11099632
+13389353.505476972
+10055555.975293374
+9502915.922392966
+9486846.590065714
+9486832.980514899
+9486832.980505139
+90000000000000.02
+
+(square (sqrt 2))
+1.0
+1.5
+1.4166666666666665
+1.4142156862745097
+1.4142135623746899
+1.414213562373095
+1.9999999999999996
+
+-------------------------------------------------------------------------------------------------------------
+Exercise 1.8:
+
+(define (cubert-iter guess x)
+  (if (good-enough? guess x)
+      guess
+      (cubert-iter (improve guess x)
+                 x)))
+
+(define (improve guess x)
+  (/ (+ (/ x (square guess))
+        (* 2 guess))
+      3))
+
+
+(define (good-enough?  guess x)
+  (display guess)
+  (newline)
+  (= (abs (- guess (improve guess x))) 0.0))
+
+(define (square x) (* x x))
+
+(define (abs x)
+  (if (< x 0)
+      (- x)
+      x))
+
+(define (cubert x)
+  (cubert-iter 1.0 x))
+
+Welcome to DrRacket, version 6.9 [3m].
+Language: sicp, with debugging; memory limit: 256 MB.
+> (cubert 27)
+1.0
+9.666666666666666
+6.540758356453956
+4.570876778578707
+3.4780192333867963
+3.0626891086275365
+3.001274406506175
+3.0000005410641766
+3.0000000000000977
+3.0
+3.0
+> (cubert 0.0027)
+1.0
+0.6675666666666666
+0.4470639879962364
+0.30254567096857854
+0.2115295385445587
+0.16113378590375088
+0.14208577455447732
+0.13930397771706904
+0.1392476877693548
+0.1392476650083871
+0.13924766500838337
+0.13924766500838337
+> (cubert 0.000027)
+1.0
+0.6666756666666668
+0.4444706938977056
+0.2963593530503223
+0.19767537403843108
+0.1320139057253243
+0.08852569059743433
+0.060165555303086204
+0.04259663081861018
+0.03335787189284609
+0.030326668677881866
+0.030003506130839862
+0.030000000409701272
+0.030000000000000002
+0.03
+0.03
+> 
  
