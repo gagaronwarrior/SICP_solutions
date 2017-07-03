@@ -1,0 +1,129 @@
+Exercise 1.1:
+Welcome to DrRacket, version 6.9 [3m].
+Language: sicp, with debugging; memory limit: 256 MB.
+> 10
+10
+> (+ 5 3 4)
+12
+> (- 9 1)
+8
+> (/ 6 2)
+3
+> (+ (* 2 4) (- 4 6))
+6
+> (define a 3)
+> a
+3
+> (define b (+ a 1))
+> b
+4
+> (+ a b (* a b))
+19
+> (= a b)
+#f
+> (if (and (> b a) (< b (* a b)))
+      b
+      a)
+4
+> (cond ((= a 4) 6)
+        ((= b 4) (+ 6 7 a))
+        (else 25))
+16
+> (+ 2 (if (> b a) b a))
+6
+> (* (cond ((> b a) a)
+           ((< a b) b)
+           (else -1))
+     (+ a 1))
+12
+> (* (cond ((> a b) a)
+           ((< a b) b)
+           (else -1))
+     (+ a 1))
+16
+> 
+
+------------------------------------------------------------------------------------------
+Exercise 1.2:
+Welcome to DrRacket, version 6.9 [3m].
+Language: sicp, with debugging; memory limit: 256 MB.
+> (/ (+ 5 4 (- 2
+               (- 3 (+ 6
+                       (/ 4 5)))))
+     (* 3 (- 6 2) (- 2 7)))
+-37/150
+
+------------------------------------------------------------------------------------------
+Exercise 1.3:
+#lang sicp
+(define (square x) (* x x))
+
+(define (sum-of-square x y)
+  (+ (square x) (square y)))
+
+(define (sum-square-larger-two x y z)
+  (cond ((and (< x y) (< x z)) (sum-of-square y z))
+        ((and (< y x) (< y z)) (sum-of-square x z))
+        (else (sum-of-square x y))))
+
+Test:
+Welcome to DrRacket, version 6.9 [3m].
+Language: sicp, with debugging; memory limit: 256 MB.
+> (sum-square-larger-two 1 2 3)
+13
+> (sum-square-larger-two 3 2 1)
+13
+> (sum-square-larger-two 1 3 2)
+13
+> (sum-square-larger-two 2 3 1)
+13
+> (sum-square-larger-two 3 1 2)
+13
+> (sum-square-larger-two 1 2 3)
+13
+> (sum-square-larger-two 2 2 1)
+8
+> (sum-square-larger-two 1 2 2)
+8
+> (sum-square-larger-two 2 2 2)
+8
+> (sum-square-larger-two 2 1 2)
+8
+>
+
+-----------------------------------------------------------------------------------------
+Exercise 1.4:
+(define (a-plus-abs-b a b)
+ ((if (> b 0) + -) a b))
+
+=> (define (a-plus-abs-b a b)
+     ((if (#t) + -) a b)) ===> (+ a b)
+=> (define (a-plus-abs-b a b)
+     ((if (#f) + -) a b)) ===> (- a b)
+
+-------------------------------------------------------------------------------------------
+Exercise 1.5:
+Applicative order evaluation:
+This evaluation process first resolve the operands and get value.
+(test 0 (p))
+Here, operator is 'test' and operands are '0' and '(p)'.
+so, first operand '(p)' is evaluated and result from it will be use to evalute 'test'.
+we know that (define (p) (p))
+so, when '(p)' is called, (test 0 (p)), it is replaced by (p) as defined in function.
+This way, to resovle '(p) again, '(p)' is called and hence forth .... again in infinite loop.
+Thus, in Applicative order of evaluation, this programme will hang up in infinite recursive calls.
+
+Normal Order Evaluation:
+This evaluation process is lazy evaulation and don't evaluate the operands until it is really needed.
+like,
+(test 0 (p)) when called following substitution happens,
+(if (= 0 0)
+   0
+   (p))
+Now (= 0 0) is evalute to #t(true), thus consequent part will be executed and return value '0'.
+Thus, in Normal order of evaluation, this programme will return 0.
+
+-------------------------------------------------------------------------------------------------------
+
+
+ 
