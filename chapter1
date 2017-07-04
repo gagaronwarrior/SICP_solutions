@@ -511,3 +511,102 @@ Exercise 1.10:
 f(n) = A(0, n) = 2n
 g(n) = A(1, n) = 2^n
 h(n) = A(2, n) = 2^ (2^ (2^ (2^ ....))) n times.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Exercise 1.11:
+Recursive process:
+(define (f n)
+  (cond ((< n 3) n)
+        (else (+ (f (- n 1))
+                 (* 2 (f (- n 2)))
+                 (* 3 (f (- n 3)))))))
+
+Welcome to DrRacket, version 6.9 [3m].
+Language: sicp, with debugging; memory limit: 256 MB.
+> (f 0)
+0
+> (f 1)
+1
+> (f 2)
+2
+> (f 3)
+4
+> (f 4)
+11
+> (f 5)
+25
+> (f 6)
+59
+> 
+
+Iterative process:
+
+(define (f n)
+  (define (f-iter a b c n)
+    (if (< n 3)
+        a
+        (f-iter (+ a (* 2 b) (* 3 c))
+                a
+                b
+                (- n 1))))
+  (if (< n 3)
+      n
+      (f-iter 2 1 0 n)))
+
+Welcome to DrRacket, version 6.9 [3m].
+Language: sicp, with debugging; memory limit: 256 MB.
+> (f 0)
+0
+> (f 1)
+1
+> (f 2)
+2
+> (f 3)
+4
+> (f 4)
+11
+> (f 25)
+812934961
+> 
+
+-------------------------------------------------------------------------------------------------------------
+Exercise 1.12:
+
+(define (Pascals-element row col)
+  (cond ((or (= col 1) (= col row)) 1)
+        ((and (> col 1) (< col row)) (+ (Pascals-element (- row 1) (- col 1))
+                                        (Pascals-element (- row 1) col)))
+        (else 0)))
+              
+Welcome to DrRacket, version 6.9 [3m].
+Language: sicp, with debugging; memory limit: 256 MB.
+> (Pascals-element 1 1)
+1
+> (Pascals-element 1 0)
+0
+> (Pascals-element 2 1)
+1
+> (Pascals-element 2 0)
+0
+> (Pascals-element 2 2)
+1
+> (Pascals-element 2 3)
+0
+> (Pascals-element 3 1)
+1
+> (Pascals-element 3 2)
+2
+> (Pascals-element 3 3)
+1
+> (Pascals-element 3 4)
+0
+> 
+----------------------------------------------------------------------------------------------------------------
+
+Exercise 1.13:
+
+https://en.wikipedia.org/wiki/Fibonacci_number
+
+----------------------------------------------------------------------------------------------------------------
+				 
