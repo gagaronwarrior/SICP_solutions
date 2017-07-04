@@ -34,3 +34,6 @@ complete sqrt programme:
 one important observation in average procedure is that if average is made on (x/guess) and x,
 the series does not converge and infinite loop is seen.
 
+2.
+Tail recursion :
+https://en.wikipedia.org/wiki/Tail_call
