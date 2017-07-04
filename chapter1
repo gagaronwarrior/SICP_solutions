@@ -462,3 +462,52 @@ Language: sicp, with debugging; memory limit: 256 MB.
 0.03
 > 
  
+-----------------------------------------------------------------------------------------------------------------------------
+Exercise 1.9:
+(define (+ a b)
+  (if (= a 0)
+       b
+	   (inc (+ (dec a) b))))
+
+Here, inc and dec are the primitive procedure.
+(+ 4 5)
+(inc (+ 3 5))
+(inc (inc (+ 2 5)))
+(inc (inc (inc (+ 1 5))))
+(inc (inc (inc (inc (+ 0 5)))))
+Here, a = 0, hence b = 5 is returned.
+(inc (inc (inc (inc 5))))
+(inc (inc (inc 6)))
+(inc (inc 7))
+(inc 8)
+9	   
+
+clearly, this is linear recursive process, as increment of b is deferred to stack windup. first full expansion and then windup to increment b.
+basically, calling recursively, we are implicit maintaining the count of variable a.
+
+(define (+ a b)
+  (if (= a 0)
+   b
+   (+ (dec a) (inc b))))
+   
+(+ 4 5)
+(+ 3 6)
+(+ 2 7)
+(+ 1 8)
+(+ 0 9)
+9
+
+clearly, this is linear iterative process, as at any point of time, the state variable a and b contains the complete information of the process.
+also, the shape of the process is different from the linear recursive one.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Exercise 1.10:
+
+(A 1 10) = 1024
+(A 2 4)  = 65536
+(A 3 3 ) = 65536
+
+f(n) = A(0, n) = 2n
+g(n) = A(1, n) = 2^n
+h(n) = A(2, n) = 2^ (2^ (2^ (2^ ....))) n times.
