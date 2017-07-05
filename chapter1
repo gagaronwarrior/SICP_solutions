@@ -630,3 +630,171 @@ T(n) = T(n/3)
 and space and time complexity for this is "big theta (lg n)".
 
 ----------------------------------------------------------------------------------------------------------------------------				 				 
+
+Exercise 1.16:
+(define (fast-exp base n)
+  (define (even? n)
+    (= (remainder n 2) 0))
+  
+  (define (square x) (* x x))
+  
+  (define (fast-iter base result n)
+    (cond ((= n 0) result)
+          ((even? n) (fast-iter (square base) result (/ n 2)))
+          (else (fast-iter base (* result base) (- n 1)))))
+  
+  (fast-iter base 1 n))
+
+Welcome to DrRacket, version 6.9 [3m].
+Language: racket, with debugging; memory limit: 256 MB.
+> (fast-exp 2 0)
+1
+> (fast-exp 2 1)
+2
+> (fast-exp 2 2)
+4
+> (fast-exp 2 3)
+8
+> (fast-exp 2 4)
+16
+> (fast-exp 2 5)
+32
+> (fast-exp 2 6)
+64
+> (fast-exp 2 7)
+128
+> 
+
+Lets understand the invariant ab^n should remain constant at every state.
+lets assume the call (fast-exp 2 16)
+base  result   n     ab^n
+2      1      16    1*2^16
+2^2    1       8    1.(2^2)^8
+4^2    1       4    1.(4^2)^4
+16^2   1       2    1.(16^2)^2
+256^2  1       1    1.(256^2)^1
+
+---------------------------------------------------------------------------------------------------
+Exercise 1.17:
+
+(define (fast-mul a b)
+  (define (double x) (+ x x))
+  (define (halve x) (/ x 2))
+  (cond ((= b 0) 0)
+        ((even? b) (double (fast-mul a (halve b))))
+        (else (+ a (fast-mul a (- b 1))))))
+		
+Welcome to DrRacket, version 6.9 [3m].
+Language: racket, with debugging; memory limit: 256 MB.
+> (fast-mul 2 1)
+2
+> (fast-mul 2 2)
+4
+> (fast-mul 2 3)
+6
+> (fast-mul 1 3)
+3
+> (fast-mul 2 0)
+0
+> (fast-mul 0 2)
+0
+> 
+
+Linear time multiplication:
+a*b = a + (a+ (a + (a + ........))) b-times.
+
+logarithmic efficency can be thought like this:
+suppose b = 16(when b is even), then
+a* 16 = 16a.
+2a = a + a
+4a = 2a + 2a
+8a = 4a + 4a
+16a = 8a + 8a
+Thus,
+b* a = ab/2 + ab/2 = double * ((b/2)*a)
+-----------------------------------------------------------------------------------------------------
+
+Exercise 1.18:
+(define (fast-mul a b)
+  (define (double x) (+ x x))
+  (define (halve x) (/ x 2))
+  (define (even? x) (= (remainder x 2) 0))
+  (define (fast-mul-iter a b result)
+    (cond ((= b 0) result)
+          ((even? b) (fast-mul-iter (double a) (halve b) result))
+          (else (fast-mul-iter a (- b 1) (+ a result)))))
+  (fast-mul-iter a b 0))
+  
+Welcome to DrRacket, version 6.9 [3m].
+Language: racket, with debugging; memory limit: 256 MB.
+> (fast-mul 2 1)
+2
+> (fast-mul 2 2)
+4
+> (fast-mul 2 3)
+6
+> (fast-mul 2 4)
+8
+> (fast-mul 2 5)
+10
+> (fast-mul 2 0)
+0
+> (fast-mul 0 1)
+0
+> (fast-mul 1 1)
+1
+> (fast-mul 200 100)
+20000
+> 
+
+The iterative invariant here is (result + a*b) = a*b.
+suppose b = 16 here,
+such that a*16 is to be calculated.
+a	 b	result    (result + a*b)
+a    16   0         0 + 16a
+2a   8    0         0 + 8*(2a)
+4a   4    0         0 + 4*(4a)
+8a   2    0         0 + 2*(8a)
+16a  1    0         0 + 1*(16a)
+---------------------------------------------------------------------------------------------------
+
+Exercise 1.19:
+
+(define (fib n)
+  (fib-iter 1 0 0 1 n))
+
+(define (even? x) (= (remainder x 2) 0))
+
+(define (fib-iter a b p q count)
+  (cond ((= count 0) b)
+        ((even? count) (fib-iter a
+                                 b
+                                 (+ (* p p) (* q q))
+                                 (+ (* 2 p q) (* q q))
+                                 (/ count 2)))
+        (else (fib-iter (+ (* b q) (* a q) (* a p))
+                        (+ (* b p) (* a q))
+                        p
+                        q
+                        (- count 1)))))
+						
+Welcome to DrRacket, version 6.9 [3m].
+Language: racket, with debugging; memory limit: 256 MB.
+> (fib 0)
+0
+> (fib 1)
+1
+> (fib 2)
+1
+> (fib 3)
+2
+> (fib 4)
+3
+> (fib 5)
+5
+> 
+
+----------------------------------------------------------------------------------------------------------
+		
+
+  
