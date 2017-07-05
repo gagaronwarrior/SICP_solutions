@@ -609,4 +609,24 @@ Exercise 1.13:
 https://en.wikipedia.org/wiki/Fibonacci_number
 
 ----------------------------------------------------------------------------------------------------------------
-				 
+----------------------------------------------------------------------------------------------------------------
+Exercise 1.15:
+
+(sine 12.15)
+(p (sin 4.05))
+(p (p (sin 1.35)))
+(p (p (p (sin 0.45))))
+(p (p (p (p (sin 0.15)))))
+(p (p (p (p (p (sin 0.05))))))
+Here, 0.05 is < 0.1 and hence, 0.05 will be return (as for small angles sin x = x)
+
+we can see that , procedure is called 5 times.
+
+space complexity is how much extra space it needs, here at each step, extra space is needed, also,
+time complexity is how much steps it need to process the information, here it takes 5 steps for (sin 12.15), hence, number of steps 
+is the time complexity.
+we get the following recurrence relation from above :
+T(n) = T(n/3)
+and space and time complexity for this is "big theta (lg n)".
+
+----------------------------------------------------------------------------------------------------------------------------				 				 
